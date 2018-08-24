@@ -1,4 +1,5 @@
 import client from './client';
+import qs from 'qs';
 
 export const register = ({ username, password }) =>
   client.post('/api/auth/register', {
@@ -20,3 +21,13 @@ export const logout = () => client.post('/api/auth/logout');
 
 export const write = ({ text, pass, name }) =>
   client.post('/api/tweets', { text, pass, name });
+
+export const getList = ({ cursor, recent, username, tag } = {}) => {
+  const query = qs.stringify({
+    cursor,
+    recent,
+    username,
+    tag,
+  });
+  return client.get('/api/tweets?' + query);
+};
