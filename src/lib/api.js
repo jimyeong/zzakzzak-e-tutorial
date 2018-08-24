@@ -17,3 +17,6 @@ export const checkAuth = () => client.get('/api/auth/check');
 export const refreshToken = () => client.post('/api/auth/refresh-token');
 
 export const logout = () => client.post('/api/auth/logout');
+
+export const write = ({ text, pass, name }) =>
+  client.post('/api/tweets', { text, pass, name });
