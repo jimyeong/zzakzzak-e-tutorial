@@ -6,8 +6,32 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import Loading from 'components/common/Loading';
+import throttle from 'lodash/throttle'; // * throttle 로 요청횟수 제한
+
+// * 스크롤 관련 함수 작성
+
+// 현재 스크롤 위치를 가져옵니다.
+// 브라우저마다 스펙이 다르기에 documentElement 유무에 따라 scrollTop 을 어디서 읽어야 할 지 다름
+const getScrollTop = () => {
+  if (!document.body) return 0;
+  const scrollTop = document.documentElement
+    ? document.documentElement.scrollTop
+    : document.body.scrollTop;
+  return scrollTop;
+};
+
+// 현재 브라우저 크기와 스크롤 위치를 계산하여 맨 아래에서 얼마나 떨어졌는지 확인
+const getScrollBottom = () => {
+  if (!document.body) return 0;
+  const { scrollHeight } = document.body;
+  const { innerHeight } = window;
+  const scrollTop = getScrollTop();
+  return scrollHeight - innerHeight - scrollTop;
+};
 
 class TweetItemListContainer extends Component {
+  lastCursor = null; // 가장 최근 추가로딩한 아이디; 중복 로딩을 방지합니다.
+
   initialize = async () => {
     // 현재 선택된 태그, 유저명에 따라 초기 요청을 넣어줍니다.
     // didMount 와 didUpdate 에서 호출됩니다.
@@ -26,6 +50,8 @@ class TweetItemListContainer extends Component {
 
   componentDidMount() {
     this.initialize();
+    // * 스크롤 이벤트 등록
+    window.addEventListener('scroll', this.handleScroll);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -41,11 +67,33 @@ class TweetItemListContainer extends Component {
     }
   }
 
-  render() {
-    // * loading 값을 확인해서 조건부로  Loading 컴포넌트 보여주기
-    const { list, username, loading } = this.props;
+  componentWillUnmount() {
+    // 언마운트시 스크롤 이벤트 제거
+    window.addEventListener('scroll', this.handleScroll);
+  }
 
-    if (loading) return <Loading />; // * 추가됨
+  // throttle 을 통하여 1초에 최소 4번만 이 함수가 발생하게끔 제한 시킬수있음.
+  handleScroll = throttle(() => {
+    const scrollBottom = getScrollBottom();
+    if (scrollBottom < 350) {
+      this.getNext();
+    }
+  }, 250);
+
+  // 다음 짹짹이들을 불러오는 함수
+  getNext = () => {
+    const { TweetActions, lastId, loadingNext, end } = this.props;
+    // 이미 진행중이거나, 더이상 불러올게 없거나, 이미 요청한 id 면 아무것도 안함
+    if (loadingNext || end || this.lastCursor === lastId) return;
+    TweetActions.getNext({ cursor: lastId });
+    this.lastCursor = lastId; // 중복 요청을 막기 위해서 값 넣어두기
+  };
+
+  render() {
+    // * loadingNext 가 true 면 아랫부분에 Loading 컴포넌트 보여주기
+    const { list, username, loading, loadingNext } = this.props;
+
+    if (loading) return <Loading />;
 
     return (
       <Fragment>
@@ -54,6 +102,7 @@ class TweetItemListContainer extends Component {
           onRemove={this.handleOpenRemoveModal}
           currentUser={username}
         />
+        {loadingNext && <Loading />}
       </Fragment>
     );
   }
@@ -66,7 +115,13 @@ const enhance = compose(
       list: tweets.list,
       end: tweets.end,
       username: user.user && user.user.username,
-      loading: pender.pending['tweets/GET_INITIAL'], // * GET_INITIAL 요청 상태
+      loading: pender.pending['tweets/GET_INITIAL'],
+      // * 현재 짹짹이의 가장 마지막 _id 값과, 추가로딩상태를 받아옴
+      lastId:
+        tweets.list &&
+        tweets.list[tweets.list.length - 1] &&
+        tweets.list[tweets.list.length - 1]._id,
+      loadingNext: pender.pending['tweets/GET_NEXT'],
     }),
     dispatch => ({
       TweetActions: bindActionCreators(tweetActions, dispatch),
