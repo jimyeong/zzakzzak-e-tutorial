@@ -10,4 +10,4 @@ class HeaderContainer extends Component {
   }
 }
 
-export default connect(({ base }) => ({ visible: base.visible }))(HeaderContainer);
+export default connect(({ base }) => ({ visible: base.header }))(HeaderContainer);
