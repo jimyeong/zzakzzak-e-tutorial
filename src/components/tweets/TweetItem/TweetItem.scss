@@ -1,0 +1,64 @@
+.TweetItem {
+  position: relative;
+  padding: 1rem;
+  border: 2px solid #343a40;
+  .tweet-head {
+    position: relative;
+    .writer {
+      font-size: 0.875rem;
+      color: #212529;
+      .anonymous-name {
+        .hash {
+          margin-left: 0.25rem;
+          font-size: 0.75rem;
+          color: #adb5bd;
+        }
+      }
+      .username {
+        font-weight: 600;
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+    .date {
+      margin-top: 0.2rem;
+      color: #495057;
+      font-size: 0.75rem;
+    }
+    .remove {
+      cursor: pointer;
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #ced4da;
+      font-size: 0.75rem;
+      &:hover {
+        color: #f06595;
+      }
+    }
+  }
+  .text {
+    margin-top: 1rem;
+    white-space: pre;
+  }
+  .tags {
+    margin-top: 1rem;
+    color: #343a40;
+    font-size: 0.75rem;
+    .tag-item {
+      margin-right: 0.25rem;
+      padding: 0.25rem;
+      display: inline-flex;
+      background: #20c997;
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+  }
+}
+
+.TweetItem + .TweetItem {
+  margin-top: 1rem;
+}
