@@ -1,7 +1,8 @@
 import React from 'react';
+import TweetsTemplate from 'components/tweets/TweetsTemplate';
 
 const TweetsPage = () => {
-  return <div>짹짹이</div>;
+  return <TweetsTemplate>짹짹이</TweetsTemplate>;
 };
 
 export default TweetsPage;
