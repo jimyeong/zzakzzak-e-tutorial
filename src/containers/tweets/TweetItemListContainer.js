@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
+import Loading from 'components/common/Loading';
 
 class TweetItemListContainer extends Component {
   initialize = async () => {
@@ -41,7 +42,10 @@ class TweetItemListContainer extends Component {
   }
 
   render() {
-    const { list, username } = this.props;
+    // * loading 값을 확인해서 조건부로  Loading 컴포넌트 보여주기
+    const { list, username, loading } = this.props;
+
+    if (loading) return <Loading />; // * 추가됨
 
     return (
       <Fragment>
@@ -58,10 +62,11 @@ class TweetItemListContainer extends Component {
 const enhance = compose(
   withRouter,
   connect(
-    ({ tweets, user }) => ({
+    ({ tweets, user, pender }) => ({
       list: tweets.list,
       end: tweets.end,
       username: user.user && user.user.username,
+      loading: pender.pending['tweets/GET_INITIAL'], // * GET_INITIAL 요청 상태
     }),
     dispatch => ({
       TweetActions: bindActionCreators(tweetActions, dispatch),
