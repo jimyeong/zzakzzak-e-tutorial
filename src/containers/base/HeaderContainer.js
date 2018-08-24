@@ -3,8 +3,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Header from 'components/base/Header';
 import Button from 'components/common/Button';
+import { logout } from 'store/modules/user';
+import { clearUser } from 'lib/common';
+import UserStatus from 'components/base/UserStatus';
 
 class HeaderContainer extends Component {
+  handleLogout = () => {
+    // 로그아웃 할때는 로컬스토리지에서도 데이터 지우고, httpOnly 쿠키를 날리기위해 로그아웃 API 요청도 함
+    clearUser();
+    this.props.logout();
+  };
   render() {
     if (!this.props.visible) return null; // visible 값이 false 일 때에는 숨기기
 
@@ -12,7 +20,9 @@ class HeaderContainer extends Component {
     return (
       <Header
         right={
-          user ? null : (
+          user ? (
+            <UserStatus username={user.username} onLogout={this.handleLogout} />
+          ) : (
             <Button to="/login" outline>
               로그인
             </Button>
@@ -23,4 +33,10 @@ class HeaderContainer extends Component {
   }
 }
 
-export default connect(({ base, user }) => ({ visible: base.header, user: user.user }))(HeaderContainer);
+export default connect(
+  ({ base, user }) => ({
+    visible: base.header,
+    user: user.user,
+  }),
+  { logout }
+)(HeaderContainer);
