@@ -1,10 +1,11 @@
 import React from 'react';
+import AppTemplate from 'components/base/AppTemplate';
 
 const App = () => {
   return (
-    <div>
-      짹짹이를 만들자.
-    </div>
+    <AppTemplate header="헤더가 들어갈자리">
+      내용이 들어갈자리
+    </AppTemplate>
   );
 };
 
