@@ -6,9 +6,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import Loading from 'components/common/Loading';
-import throttle from 'lodash/throttle'; // * throttle 로 요청횟수 제한
-
-// * 스크롤 관련 함수 작성
+import throttle from 'lodash/throttle';
 
 // 현재 스크롤 위치를 가져옵니다.
 // 브라우저마다 스펙이 다르기에 documentElement 유무에 따라 scrollTop 을 어디서 읽어야 할 지 다름
@@ -31,6 +29,30 @@ const getScrollBottom = () => {
 
 class TweetItemListContainer extends Component {
   lastCursor = null; // 가장 최근 추가로딩한 아이디; 중복 로딩을 방지합니다.
+  timeoutId = null; // recentUpdate 의 timeoutId
+
+  recentUpdater = () => {
+    // 30초마다 새 데이터를 받아옵니다.
+    // 실제 프로덕션에서는 이렇게 주기적으로 받아오는 것 보다
+    // websocket 을 사용하거나
+    // https://pusher.com/ 같은 서비스를 사용하는게 성능에 좋습니다.
+    // timeoutId 를 설정한 이유는 componentWillUnmount 에서
+    // 작업 취소를 하기 위함입니다.
+    this.timeoutid = setTimeout(() => {
+      const {
+        TweetActions,
+        match: { params },
+      } = this.props;
+      const { tag, username } = params;
+      TweetActions.getRecent({
+        cursor: this.props.firstId,
+        recent: true,
+        tag,
+        username,
+      });
+      this.recentUpdater();
+    }, 30 * 1000);
+  };
 
   initialize = async () => {
     // 현재 선택된 태그, 유저명에 따라 초기 요청을 넣어줍니다.
@@ -45,12 +67,13 @@ class TweetItemListContainer extends Component {
         username,
         tag,
       });
+      this.recentUpdater();
     } catch (e) {}
   };
 
   componentDidMount() {
     this.initialize();
-    // * 스크롤 이벤트 등록
+    // 스크롤 이벤트 등록
     window.addEventListener('scroll', this.handleScroll);
   }
 
@@ -70,6 +93,8 @@ class TweetItemListContainer extends Component {
   componentWillUnmount() {
     // 언마운트시 스크롤 이벤트 제거
     window.addEventListener('scroll', this.handleScroll);
+    // * 30초뒤 해야 하는 작업 중지
+    clearTimeout(this.timeoutId);
   }
 
   // throttle 을 통하여 1초에 최소 4번만 이 함수가 발생하게끔 제한 시킬수있음.
@@ -90,7 +115,6 @@ class TweetItemListContainer extends Component {
   };
 
   render() {
-    // * loadingNext 가 true 면 아랫부분에 Loading 컴포넌트 보여주기
     const { list, username, loading, loadingNext } = this.props;
 
     if (loading) return <Loading />;
@@ -116,12 +140,13 @@ const enhance = compose(
       end: tweets.end,
       username: user.user && user.user.username,
       loading: pender.pending['tweets/GET_INITIAL'],
-      // * 현재 짹짹이의 가장 마지막 _id 값과, 추가로딩상태를 받아옴
       lastId:
         tweets.list &&
         tweets.list[tweets.list.length - 1] &&
         tweets.list[tweets.list.length - 1]._id,
       loadingNext: pender.pending['tweets/GET_NEXT'],
+      // * 맨 위에있는 _id
+      firstId: tweets.list && tweets.list[0] && tweets.list[0]._id,
     }),
     dispatch => ({
       TweetActions: bindActionCreators(tweetActions, dispatch),
