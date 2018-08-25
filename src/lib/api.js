@@ -31,3 +31,7 @@ export const getList = ({ cursor, recent, username, tag } = {}) => {
   });
   return client.get('/api/tweets?' + query);
 };
+
+// * 추가됨
+export const remove = ({ id, pass }) =>
+  client.delete(`/api/tweets/${id}/?${pass ? `pass=${pass}` : ''}`);
