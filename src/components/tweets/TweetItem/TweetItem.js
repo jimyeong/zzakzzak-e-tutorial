@@ -2,6 +2,7 @@ import React from 'react';
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import ko from 'date-fns/locale/ko';
 import { Link } from 'react-router-dom';
+import onlyUpdateForKeys from 'recompose/onlyUpdateForKeys';
 import './TweetItem.scss';
 
 const TweetItem = ({
@@ -69,4 +70,4 @@ TweetItem.defaultProps = {
   },
 };
 
-export default TweetItem;
+export default onlyUpdateForKeys(['tweet', 'currentUser'])(TweetItem);

@@ -1,5 +1,6 @@
 import React from 'react';
 import './TweetItemList.scss';
+import onlyUpdateForKeys from 'recompose/onlyUpdateForKeys';
 import TweetItem from '../TweetItem';
 
 const TweetItemList = ({ tweets, currentUser, onRemove }) => {
@@ -15,4 +16,4 @@ const TweetItemList = ({ tweets, currentUser, onRemove }) => {
   return <div className="TweetItemList">{tweetItems}</div>;
 };
 
-export default TweetItemList;
+export default onlyUpdateForKeys(['tweets', 'curentUser'])(TweetItemList);
