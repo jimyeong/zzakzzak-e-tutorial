@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TweetWrite from 'components/tweets/TweetWrite';
 import { connect } from 'react-redux';
 import { changeInput, writeTweet } from 'store/modules/write';
+import { getRecent } from 'store/modules/tweets';
 
 class TweetWriteContainer extends Component {
   handleChange = e => {
@@ -16,7 +17,7 @@ class TweetWriteContainer extends Component {
 
   handleWrite = async () => {
     // 짹짹이 작성하기 함수
-    const { fields, changeInput, writeTweet } = this.props;
+    const { fields, changeInput, writeTweet, getRecent } = this.props;
     const { name, password, text } = fields;
     if (!text) return;
     try {
@@ -29,7 +30,10 @@ class TweetWriteContainer extends Component {
         pass: password,
         text,
       });
-      // 추후 신규 짹짹이 로딩 구현
+      await getRecent({
+        cursor: this.props.firstId,
+        recent: true,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -52,9 +56,11 @@ export default connect(
   ({ write, tweets, user }) => ({
     fields: write.fields,
     user: user.user,
+    firstId: tweets.list && tweets.list[0] && tweets.list[0]._id,
   }),
   {
     changeInput,
     writeTweet,
+    getRecent,
   }
 )(TweetWriteContainer);
