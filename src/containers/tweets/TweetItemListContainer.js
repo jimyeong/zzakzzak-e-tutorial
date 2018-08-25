@@ -101,17 +101,24 @@ class TweetItemListContainer extends Component {
   handleScroll = throttle(() => {
     const scrollBottom = getScrollBottom();
     if (scrollBottom < 350) {
+      console.log(scrollBottom);
       this.getNext();
     }
   }, 250);
 
   // 다음 짹짹이들을 불러오는 함수
   getNext = () => {
-    const { TweetActions, lastId, loadingNext, end } = this.props;
+    const { TweetActions, lastId, loadingNext, end, match } = this.props;
     // 이미 진행중이거나, 더이상 불러올게 없거나, 이미 요청한 id 면 아무것도 안함
     if (loadingNext || end || this.lastCursor === lastId) return;
-    TweetActions.getNext({ cursor: lastId });
+    const { tag, username } = match.params;
+    TweetActions.getNext({ cursor: lastId, tag, username });
     this.lastCursor = lastId; // 중복 요청을 막기 위해서 값 넣어두기
+  };
+
+  handleOpenRemoveModal = ({ id, needPass }) => {
+    const { TweetActions } = this.props;
+    TweetActions.openRemoveModal({ id, needPass });
   };
 
   render() {
@@ -145,7 +152,6 @@ const enhance = compose(
         tweets.list[tweets.list.length - 1] &&
         tweets.list[tweets.list.length - 1]._id,
       loadingNext: pender.pending['tweets/GET_NEXT'],
-      // * 맨 위에있는 _id
       firstId: tweets.list && tweets.list[0] && tweets.list[0]._id,
     }),
     dispatch => ({

@@ -39,7 +39,14 @@ const TweetItem = ({
         <div className="date">
           {distanceInWordsToNow(createdAt, { locale: ko, addSuffix: true })}
         </div>
-        {removable && <div className="remove">[삭제]</div>}
+        {removable && (
+          <div
+            className="remove"
+            onClick={() => onRemove({ id: _id, needPass: writer.anonymous })}
+          >
+            [삭제]
+          </div>
+        )}
       </div>
       <div className="text">{text}</div>
       {tags.length > 0 && <div className="tags">{tagItems}</div>}
