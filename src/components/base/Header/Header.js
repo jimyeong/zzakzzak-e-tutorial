@@ -1,12 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Header.scss';
 
 const Header = ({ right }) => {
   return (
     <header className="Header">
-      <a to="#" className="title">
+      <Link to="/" className="title">
         짹짹이
-      </a>
+      </Link>
       <div className="right">{right}</div>
     </header>
   );
