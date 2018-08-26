@@ -16,6 +16,7 @@ export const changeInput = createAction(CHANGE_INPUT, ({ field, value }) => ({
 }));
 export const login = createAction(LOGIN, api.login);
 export const register = createAction(REGISTER, api.register);
+export const setError = createAction(SET_ERROR, error => error);
 
 const initialState = {
   fields: {
