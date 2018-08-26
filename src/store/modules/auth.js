@@ -10,6 +10,7 @@ export const changeInput = createAction(CHANGE_INPUT, ({ field, value }) => ({
   field,
   value,
 }));
+export const setError = createAction(SET_ERROR, error => error);
 
 const initialState = {
   fields: {
