@@ -52,4 +52,6 @@ module.exports = {
   appNodeModules: resolveApp('node_modules'),
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
+  ssrJs: resolveApp('src/serverRender.js'), // 서버용 엔트리 파일 경로
+  ssrBuild: resolveApp('ssr-server/src'), // 서버용 빌드 경로
 };
