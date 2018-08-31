@@ -18042,7 +18042,7 @@ UserActions=_this.props.UserActions;UserActions.tempSetUser(user);_context.prev=
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_redux_pender__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_redux_pender___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_redux_pender__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules__ = __webpack_require__(281);
-var configure=function configure(){var devTools=window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;var composeEnhancers=devTools||__WEBPACK_IMPORTED_MODULE_0_redux__["d" /* compose */];var middlewares=[__WEBPACK_IMPORTED_MODULE_1_redux_pender___default()()];var store=Object(__WEBPACK_IMPORTED_MODULE_0_redux__["e" /* createStore */])(__WEBPACK_IMPORTED_MODULE_2__modules__["a" /* default */],composeEnhancers(__WEBPACK_IMPORTED_MODULE_0_redux__["a" /* applyMiddleware */].apply(undefined,middlewares)));return store;};/* harmony default export */ __webpack_exports__["a"] = (configure);
+var configure=function configure(){var devTools=typeof window!=='undefined'&&window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;var composeEnhancers=devTools||__WEBPACK_IMPORTED_MODULE_0_redux__["d" /* compose */];var middlewares=[__WEBPACK_IMPORTED_MODULE_1_redux_pender___default()()];var store=Object(__WEBPACK_IMPORTED_MODULE_0_redux__["e" /* createStore */])(__WEBPACK_IMPORTED_MODULE_2__modules__["a" /* default */],composeEnhancers(__WEBPACK_IMPORTED_MODULE_0_redux__["a" /* applyMiddleware */].apply(undefined,middlewares)));return store;};/* harmony default export */ __webpack_exports__["a"] = (configure);
 
 /***/ }),
 /* 281 */
