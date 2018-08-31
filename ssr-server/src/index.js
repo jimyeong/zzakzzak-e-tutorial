@@ -43,8 +43,8 @@ const buildHtml = (html, state) => {
     <script>
         window.__PRELOADED_STATE__ = ${state ? JSON.stringify(state).replace(/</g, '\\u003c') : 'undefined'}
     </script>
-    <script type="text/javascript"
-      src="/${manifest['main.js']}"></script>
+    <script type="text/javascript" src="/${manifest['vendor.js']}"></script>
+    <script type="text/javascript" src="/${manifest['main.js']}"></script>
   </body>
   
   </html>`;
