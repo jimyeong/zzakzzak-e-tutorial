@@ -25,7 +25,7 @@ app.use(router.allowedMethods());
 const publicPath = path.join(__dirname, '../../build');
 app.use(koaStatic(publicPath, { index: false }));
 
-const buildHtml = html => {
+const buildHtml = (html, state) => {
   return `<!doctype html>
   <html lang="en">
   
@@ -40,6 +40,9 @@ const buildHtml = html => {
   </head>
   
   <body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root">${html}</div>
+    <script>
+        window.__PRELOADED_STATE__ = ${state ? JSON.stringify(state).replace(/</g, '\\u003c') : 'undefined'}
+    </script>
     <script type="text/javascript"
       src="/${manifest['main.js']}"></script>
   </body>
@@ -54,7 +57,7 @@ app.use(async ctx => {
 
   try {
     const result = await render(ctx);
-    ctx.body = buildHtml(result.html);
+    ctx.body = buildHtml(result.html, result.state);
   } catch (e) {
     console.log(e);
   }
