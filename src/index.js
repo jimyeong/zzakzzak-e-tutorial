@@ -7,7 +7,7 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import configure from 'store/configure';
 
-const store = configure();
+const store = configure(window.__PRELOADED_STATE__);
 
 ReactDOM.render(
   <Provider store={store}>
