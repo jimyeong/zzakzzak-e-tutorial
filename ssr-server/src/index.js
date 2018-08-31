@@ -3,8 +3,8 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const koaStatic = require('koa-static');
 const path = require('path');
-// const fs = require('fs'); // 파일을 읽어오는 모듈
 const render = require('./ssr').default;
+const manifest = require('../../build/asset-manifest.json'); // manifest 파일 안에 CSS 와 JS 파일들의 경로가 들어있음
 const app = new Koa();
 
 const port = process.env.PORT || 5000;
@@ -25,9 +25,27 @@ app.use(router.allowedMethods());
 const publicPath = path.join(__dirname, '../../build');
 app.use(koaStatic(publicPath, { index: false }));
 
-// const indexPath = path.join(publicPath, 'index.html');
-// const indexHtml = fs.readFileSync(indexPath);
-
+const buildHtml = html => {
+  return `<!doctype html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title>React App</title>
+    <link href="/${manifest['main.css']}" rel="stylesheet">
+  </head>
+  
+  <body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root">${html}</div>
+    <script type="text/javascript"
+      src="/${manifest['main.js']}"></script>
+  </body>
+  
+  </html>`;
+}
 // fallback 함수
 app.use(async ctx => {
   // 이전 미들웨어에서 처리 할 수 없는 경우에만 이 fallback 이 실행됨
@@ -36,7 +54,7 @@ app.use(async ctx => {
 
   try {
     const result = await render(ctx);
-    ctx.body = result;
+    ctx.body = buildHtml(result.html);
   } catch (e) {
     console.log(e);
   }
