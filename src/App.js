@@ -4,6 +4,7 @@ import AppTemplate from 'components/base/AppTemplate';
 import { AuthPage, TweetsPage } from 'pages';
 import HeaderContainer from 'containers/base/HeaderContainer';
 import Core from 'containers/base/Core';
+import { Rendered } from 'lib/shouldCancel';
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Route path="/tags/:tag" component={TweetsPage} />
       <Route path="/:authType(login|register)" component={AuthPage} />
       <Core />
+      <Rendered />
     </AppTemplate>
   );
 };

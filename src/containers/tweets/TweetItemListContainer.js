@@ -7,6 +7,7 @@ import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
 import Loading from 'components/common/Loading';
 import throttle from 'lodash/throttle';
+import shouldCancel from 'lib/shouldCancel';
 
 // 현재 스크롤 위치를 가져옵니다.
 // 브라우저마다 스펙이 다르기에 documentElement 유무에 따라 scrollTop 을 어디서 읽어야 할 지 다름
@@ -57,6 +58,9 @@ class TweetItemListContainer extends Component {
   initialize = async () => {
     // 현재 선택된 태그, 유저명에 따라 초기 요청을 넣어줍니다.
     // didMount 와 didUpdate 에서 호출됩니다.
+    
+    // shouldCancel 이 true 면 함수 끝냄
+    if (shouldCancel()) return;
     const {
       TweetActions,
       match: { params },
